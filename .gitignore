@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Local environment/config
+.env
+.env.*
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Logs and reports
+*.log
+
+# Generated datasets
+injury_text_dataset.csv
+
+# Generated model artifacts
+models/*.joblib
+models/*.pkl
+models/*.json
+models/model_report.txt
+
+# OS files
+.DS_Store
+Thumbs.db
