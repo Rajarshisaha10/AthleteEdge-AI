@@ -66,8 +66,8 @@ log(classification_report(yt_te, yt_pred, target_names=["mild","moderate","sever
 cv = cross_val_score(triage_clf, X, y_triage, cv=5, scoring="f1_weighted")
 log(f"5-fold CV F1: {cv.mean():.3f} ± {cv.std():.3f}")
 joblib.dump(triage_clf, os.path.join(MODEL_DIR, "triage_clf.joblib"))
-triage_clf.save_model(os.path.join(MODEL_DIR, "triage_clf.json"))
-log("Saved: triage_clf.joblib + triage_clf.json")
+# triage_clf.save_model(os.path.join(MODEL_DIR, "triage_clf.json"))
+log("Saved: triage_clf.joblib")
 
 # ── 2. Doctor Classifier (stacked on triage prediction) ─────────────────────
 log("\n=== REQUIRES-DOCTOR CLASSIFIER ===")
@@ -83,8 +83,8 @@ doctor_clf.fit(X_tr_d, yd_tr, eval_set=[(X_te_d, yd_te)], verbose=False)
 yd_pred = doctor_clf.predict(X_te_d)
 log(classification_report(yd_te, yd_pred, target_names=["no_doctor","see_doctor"]))
 joblib.dump(doctor_clf, os.path.join(MODEL_DIR, "doctor_clf.joblib"))
-doctor_clf.save_model(os.path.join(MODEL_DIR, "doctor_clf.json"))
-log("Saved: doctor_clf.joblib + doctor_clf.json")
+# doctor_clf.save_model(os.path.join(MODEL_DIR, "doctor_clf.json"))
+log("Saved: doctor_clf.joblib")
 
 # ── 3. Recovery Regressor ────────────────────────────────────────────────────
 log("\n=== RECOVERY DAYS REGRESSOR ===")
@@ -97,13 +97,13 @@ recovery_reg.fit(X_tr_d, yr_tr, eval_set=[(X_te_d, yr_te)], verbose=False)
 yr_pred = np.clip(recovery_reg.predict(X_te_d), 1, 120)
 log(f"MAE: {mean_absolute_error(yr_te, yr_pred):.1f} days  R²: {r2_score(yr_te, yr_pred):.3f}")
 joblib.dump(recovery_reg, os.path.join(MODEL_DIR, "recovery_reg.joblib"))
-recovery_reg.save_model(os.path.join(MODEL_DIR, "recovery_reg.json"))
-log("Saved: recovery_reg.joblib + recovery_reg.json")
+# recovery_reg.save_model(os.path.join(MODEL_DIR, "recovery_reg.json"))
+log("Saved: recovery_reg.joblib")
 
 # ── Feature importance ───────────────────────────────────────────────────────
 log("\n=== FEATURE IMPORTANCE (triage model) ===")
 for name, score in sorted(zip(FEATURES, triage_clf.feature_importances_), key=lambda x: -x[1]):
-    bar = "█" * int(score * 200)
+    bar = "#" * int(score * 200)
     log(f"  {name:<30s} {score:.4f}  {bar}")
 
 # ── Label maps ───────────────────────────────────────────────────────────────
@@ -124,8 +124,7 @@ log("Saved: label_maps.json")
 
 # ── Model sizes ──────────────────────────────────────────────────────────────
 log("\n=== MODEL FILE SIZES ===")
-for fname in ["triage_clf.json","doctor_clf.json","recovery_reg.json",
-              "triage_clf.joblib","doctor_clf.joblib","recovery_reg.joblib"]:
+for fname in ["triage_clf.joblib","doctor_clf.joblib","recovery_reg.joblib"]:
     path = os.path.join(MODEL_DIR, fname)
     size = os.path.getsize(path) / 1024
     log(f"  {fname:<30s} {size:.0f} KB")
